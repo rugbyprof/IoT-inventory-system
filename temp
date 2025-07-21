@@ -1,3 +1,6 @@
 git remote add origin https://github.com/rugbyprof/IoT-inventory-system.git
 git branch -M main
 git push -u origin main
+
+git remote add github git@github.com:rugbyprof/IoT-inventory-system.git
+git remote add server ssh://root@profgriffin.com/IoT-inventory-system.git
