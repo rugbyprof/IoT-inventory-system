@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Checkout Component</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="container">
+      <h2>Checkout Request</h2>
+      <input
+        type="number"
+        id="component_id"
+        placeholder="Component ID"
+        required
+      />
+      <input
+        type="number"
+        id="quantity"
+        placeholder="Quantity to Checkout"
+        required
+      />
+      <button onclick="checkoutComponent()">Submit Request</button>
+    </div>
+
+    <script>
+      function checkoutComponent() {
+        fetch("http://localhost:3000/api/checkout", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + localStorage.getItem("token"),
+          },
+          body: JSON.stringify({
+            component_id: parseInt(
+              document.getElementById("component_id").value
+            ),
+            quantity: parseInt(document.getElementById("quantity").value),
+          }),
+        })
+          .then((res) => res.json())
+          .then((data) => alert(data.message || data.error));
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Add Component</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="container">
+      <h2>Add New Component</h2>
+      <input type="text" id="name" placeholder="Component Name" required />
+      <select id="category">
+        <option>main board</option>
+        <option>breakout board</option>
+        <option>capacitor</option>
+        <option>diode</option>
+        <option>resistor</option>
+        <option>transistor</option>
+        <option>sensor</option>
+      </select>
+      <input type="number" id="quantity" placeholder="Quantity" required />
+      <button onclick="addComponent()">Add Component</button>
+    </div>
+
+    <script>
+      function addComponent() {
+        fetch("http://localhost:3000/api/components/add", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + localStorage.getItem("token"),
+          },
+          body: JSON.stringify({
+            name: document.getElementById("name").value,
+            category: document.getElementById("category").value,
+            quantity: parseInt(document.getElementById("quantity").value),
+          }),
+        })
+          .then((res) => res.json())
+          .then((data) => alert(data.message || data.error));
+      }
+    </script>
+  </body>
+</html>

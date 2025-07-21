@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="container">
+      <h2>Admin Dashboard</h2>
+      <div
+        id="pending-tile"
+        style="
+          padding: 15px;
+          background: #ffeeba;
+          margin-bottom: 20px;
+          border-radius: 5px;
+        "
+      >
+        Pending Requests: <span id="pending-count">0</span>
+      </div>
+
+      <h3>Inventory</h3>
+      <table id="inventory-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Category</th>
+            <th>Quantity</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+
+      <h3>Recent Checkouts</h3>
+      <table id="checkout-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>User</th>
+            <th>Component</th>
+            <th>Qty</th>
+            <th>Date</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+    <script>
+      const token = localStorage.getItem("token");
+      if (!token) {
+        alert("Login required");
+        window.location.href = "admin-login.html";
+      }
+
+      async function fetchInventory() {
+        const res = await fetch(
+          "http://localhost:3000/api/components/dashboard",
+          {
+            headers: { Authorization: "Bearer " + token },
+          }
+        );
+        const data = await res.json();
+        const tbody = document.querySelector("#inventory-table tbody");
+        tbody.innerHTML = "";
+        data.forEach((item) => {
+          const tr = document.createElement("tr");
+          tr.innerHTML = `<td>${item.id}</td><td>${item.name}</td><td>${item.category}</td><td>${item.quantity}</td>`;
+          tbody.appendChild(tr);
+        });
+      }
+
+      async function fetchCheckouts() {
+        const res = await fetch("http://localhost:3000/api/admin/checkouts", {
+          headers: { Authorization: "Bearer " + token },
+        });
+        const data = await res.json();
+        const tbody = document.querySelector("#checkout-table tbody");
+        tbody.innerHTML = "";
+        data.forEach((c) => {
+          const tr = document.createElement("tr");
+          tr.innerHTML = `<td>${c.id}</td><td>${c.username}</td><td>${
+            c.component
+          }</td><td>${c.quantity}</td><td>${new Date(
+            c.checkout_date
+          ).toLocaleString()}</td>`;
+          tbody.appendChild(tr);
+        });
+      }
+
+      async function updatePendingCount() {
+        const res = await fetch(
+          "http://localhost:3000/api/admin/pending-count",
+          {
+            headers: { Authorization: "Bearer " + token },
+          }
+        );
+        const { pending } = await res.json();
+        document.getElementById("pending-count").innerText = pending;
+      }
+
+      fetchInventory();
+      fetchCheckouts();
+      updatePendingCount();
+    </script>
+  </body>
+</html>
