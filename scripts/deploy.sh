@@ -18,6 +18,14 @@ git push github main
 
 # Push to your server via SSH
 echo "🚀 Deploying to profgriffin.com..."
+
+echo "🔄 Adding all files..."
+git add .
+
+echo "📝 Committing changes..."
+git commit -m "Deploying changes"
+
+
 echo "📡 Pulling from Server and rebasing ..."
 git pull --rebase server main
 
