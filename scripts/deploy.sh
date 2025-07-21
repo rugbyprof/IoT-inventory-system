@@ -18,6 +18,10 @@ git push github main
 
 # Push to your server via SSH
 echo "🚀 Deploying to profgriffin.com..."
+echo "📡 Pulling from Server and rebasing ..."
+git pull --rebase server main
+
+echo "🔄 Pushing to server..."
 git push server main
 
 echo "✅ Deployment complete!"
