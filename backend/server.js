@@ -9,10 +9,6 @@ console.log('DB_USER:', process.env.DB_USER);
 console.log('DB_PASS:', process.env.DB_PASS);
 
 
-// console.log('Path:', path);
-// console.log('Current working directory:', process.cwd());
-// console.log('Current file location:', __dirname);
-
 const db = process.env.DB
 
 console.log('DB .env:', process.env.DB);
@@ -49,6 +45,8 @@ app.use('/api/admin', adminRoutes);
 //   app.use('/api/checkout2', checkoutRoutes);
 //   app.use('/api/admin2', adminRoutes);
 // //}
+
+console.log('Server is running on port:', PORT);
 
 
 app.listen(PORT, () => {
