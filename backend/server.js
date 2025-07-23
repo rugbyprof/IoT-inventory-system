@@ -7,16 +7,18 @@ const db = process.env.DB
 console.log('DB .env:', process.env.DB);
 
 // if(db==='MySQL') {
-//   const authRoutes = require('./routes/auth');
-//   const componentRoutes = require('./routes/components');
-//   const checkoutRoutes = require('./routes/checkout');
-//   const adminRoutes = require('./routes/admin');
-// }else{
-  const authRoutes = require('./routes/auth2');
-  const componentRoutes = require('./routes/components2');
-  const checkoutRoutes = require('./routes/checkout2');
-  const adminRoutes = require('./routes/admin2');
-//}
+
+const authRoutes = require('./routes/auth');
+const componentRoutes = require('./routes/components');
+const checkoutRoutes = require('./routes/checkout');
+const adminRoutes = require('./routes/admin');
+
+// // }else{
+//   const authRoutes = require('./routes/auth2');
+//   const componentRoutes = require('./routes/components2');
+//   const checkoutRoutes = require('./routes/checkout2');
+//   const adminRoutes = require('./routes/admin2');
+// //}
 const app = express();
 const PORT = process.env.PORT || 5050;
 
@@ -26,16 +28,16 @@ app.use(express.json());
 console.log(db);
 
 // if(db=='MySQL') {
-//   app.use('/api/auth', authRoutes);
-//   app.use('/api/components', componentRoutes);
-//   app.use('/api/checkout', checkoutRoutes);
-//   app.use('/api/admin', adminRoutes);
-// }else{
-  app.use('/api/auth2', authRoutes);
-  app.use('/api/components2', componentRoutes);
-  app.use('/api/checkout2', checkoutRoutes);
-  app.use('/api/admin2', adminRoutes);
-//}
+app.use('/api/auth', authRoutes);
+app.use('/api/components', componentRoutes);
+app.use('/api/checkout', checkoutRoutes);
+app.use('/api/admin', adminRoutes);
+// // }else{
+//   app.use('/api/auth2', authRoutes);
+//   app.use('/api/components2', componentRoutes);
+//   app.use('/api/checkout2', checkoutRoutes);
+//   app.use('/api/admin2', adminRoutes);
+// //}
 
 
 app.listen(PORT, () => {
