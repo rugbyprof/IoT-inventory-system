@@ -1,18 +1,15 @@
 const jwt = require('jsonwebtoken');
-const SECRET = 'supersecretkey'; // Ideally from .env
+const SECRET = process.env.JWT_SECRET || 'supersecretkey';
 
-function authenticateToken(req, res, next) {
-  const authHeader = req.headers['authorization'];
-  if (!authHeader) return res.sendStatus(401); // Unauthorized
-
-  const token = authHeader.split(' ')[1];
-  if (!token) return res.sendStatus(401);
-
+function authenticate(req, res, next) {
+  const h = req.headers.authorization;
+  if (!h) return res.sendStatus(401);
+  const token = h.split(' ')[1];
   jwt.verify(token, SECRET, (err, user) => {
-    if (err) return res.sendStatus(403); // Forbidden
+    if (err) return res.sendStatus(403);
     req.user = user;
     next();
   });
 }
 
-module.exports = authenticateToken;
+module.exports = authenticate;

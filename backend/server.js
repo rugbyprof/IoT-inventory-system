@@ -1,56 +1,29 @@
 const express = require('express');
 const cors = require('cors');
-const path = require('path');
-
-
-require('dotenv').config({ path: __dirname + '/../.env' });
-
-console.log('DB_USER:', process.env.DB_USER);
-console.log('DB_PASS:', process.env.DB_PASS);
-
-
-const db = process.env.DB
-
-console.log('DB .env:', process.env.DB);
-
-// if(db==='MySQL') {
+require('dotenv').config();
 
 const authRoutes = require('./routes/auth');
 const componentRoutes = require('./routes/components');
 const checkoutRoutes = require('./routes/checkout');
 const adminRoutes = require('./routes/admin');
 
-// // }else{
-//   const authRoutes = require('./routes/auth2');
-//   const componentRoutes = require('./routes/components2');
-//   const checkoutRoutes = require('./routes/checkout2');
-//   const adminRoutes = require('./routes/admin2');
-// //}
 const app = express();
-const PORT = process.env.PORT || 5050;
+const HOST = process.env.HOST || 'localhost';
+const PORT = parseInt(process.env.PORT, 10) || 3000;
 
 app.use(cors());
 app.use(express.json());
 
-console.log(db);
-
-// if(db=='MySQL') {
 app.use('/api/auth', authRoutes);
 app.use('/api/components', componentRoutes);
 app.use('/api/checkout', checkoutRoutes);
 app.use('/api/admin', adminRoutes);
-// // }else{
-//   app.use('/api/auth2', authRoutes);
-//   app.use('/api/components2', componentRoutes);
-//   app.use('/api/checkout2', checkoutRoutes);
-//   app.use('/api/admin2', adminRoutes);
-// //}
 
-console.log('Server is running on port:', PORT);
+// Ensure only one app.listen call
+if (require.main === module) {
+  app.listen(PORT, HOST, () => {
+    console.log(`🚀 Server running at http://${HOST}:${PORT}`);
+  });
+}
 
-
-app.listen(PORT, () => {
-  console.log(`🚀 Server running at http://localhost:${PORT}`);
-});
-
-
+module.exports = app;
