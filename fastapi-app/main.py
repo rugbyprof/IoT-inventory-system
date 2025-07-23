@@ -138,6 +138,8 @@ def login(u: UserLogin):
     cur = db.cursor(dictionary=True)
     cur.execute("SELECT * FROM users WHERE username=%s", (u.username,))
     user = cur.fetchone()
+    print(u)
+    print(user["password"])
     if not user or not bcrypt.checkpw(u.password.encode(), user["password"].encode()):
         raise HTTPException(status_code=401, detail="Invalid credentials")
     token = create_token(
