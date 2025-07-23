@@ -8,7 +8,7 @@ const checkoutRoutes = require('./routes/checkout');
 const adminRoutes = require('./routes/admin');
 
 const app = express();
-const HOST = process.env.HOST || 'localhost';
+const HOST = process.env.HOST || '127.0.0.1';
 const PORT = parseInt(process.env.PORT, 10) || 5050;
 
 app.use(cors());
