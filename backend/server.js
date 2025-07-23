@@ -3,12 +3,12 @@ const cors = require('cors');
 const path = require('path');
 
 
-require('dotenv').config({ path: '/root/IoT-inventory-system/.env' });
+require('dotenv').config();
 
 
-console.log('Path:', path);
-console.log('Current working directory:', process.cwd());
-console.log('Current file location:', __dirname);
+// console.log('Path:', path);
+// console.log('Current working directory:', process.cwd());
+// console.log('Current file location:', __dirname);
 
 const db = process.env.DB
 
