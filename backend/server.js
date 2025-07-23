@@ -5,6 +5,9 @@ const path = require('path');
 
 require('dotenv').config({ path: __dirname + '/../.env' });
 
+console.log('DB_USER:', process.env.DB_USER);
+console.log('DB_PASS:', process.env.DB_PASS);
+
 
 // console.log('Path:', path);
 // console.log('Current working directory:', process.cwd());
