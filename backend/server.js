@@ -1,7 +1,9 @@
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
-require('dotenv').config({ path: '../.env' });
+
+const cwd = process.cwd();
+require('dotenv').config({ path: cwd + '/../.env' });
 
 
 console.log('Path:', path);
