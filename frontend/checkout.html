@@ -33,7 +33,7 @@
 
       async function loadComponents() {
         try {
-          const res = await fetch("http://localhost:5050/components", {
+          const res = await fetch("http://profgriffin:5050/components", {
             headers: {
               Authorization: `Bearer ${token}`,
             },
@@ -66,7 +66,7 @@
           );
 
           try {
-            const res = await fetch("http://localhost:5050/checkout", {
+            const res = await fetch("http://profgriffin:5050/checkout", {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",

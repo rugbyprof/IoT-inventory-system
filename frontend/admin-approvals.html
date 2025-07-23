@@ -29,7 +29,7 @@
       if (!token) {
         message.textContent = "Not authenticated. Please login.";
       } else {
-        fetch("http://localhost:5050/admin/pending-checkouts", {
+        fetch("http://profgriffin:5050/admin/pending-checkouts", {
           headers: { Authorization: `Bearer ${token}` },
         })
           .then((res) => res.json())
@@ -62,7 +62,7 @@
       }
 
       function approve(id) {
-        fetch(`http://localhost:5050/admin/approve-checkout/${id}`, {
+        fetch(`http://profgriffin:5050/admin/approve-checkout/${id}`, {
           method: "POST",
           headers: { Authorization: `Bearer ${token}` },
         })
@@ -80,7 +80,7 @@
       function reject(id) {
         const reason =
           prompt("Enter rejection reason:") || "No reason provided";
-        fetch(`http://localhost:5050/admin/reject-checkout/${id}`, {
+        fetch(`http://profgriffin:5050/admin/reject-checkout/${id}`, {
           method: "POST",
           headers: {
             Authorization: `Bearer ${token}`,

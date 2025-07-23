@@ -29,7 +29,7 @@
       if (!token) {
         message.textContent = "Not authenticated. Please login.";
       } else {
-        fetch("http://localhost:5050/checkout/my-requests", {
+        fetch("http://profgriffin:5050/checkout/my-requests", {
           headers: { Authorization: `Bearer ${token}` },
         })
           .then((res) => res.json())
