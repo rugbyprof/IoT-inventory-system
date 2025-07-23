@@ -17,19 +17,19 @@ echo "🔄 Pushing to GitHub..."
 git push github main
 
 # Push to your server via SSH
-echo "🚀 Deploying to profgriffin.com..."
+# echo "🚀 Deploying to profgriffin.com..."
 
-echo "🔄 Adding all files..."
-git add .
+# echo "🔄 Adding all files..."
+# git add .
 
-echo "📝 Committing changes..."
-git commit -m "Deploying changes"
+# echo "📝 Committing changes..."
+# git commit -m "Deploying changes"
 
 
-echo "📡 Pulling from Server and rebasing ..."
-git pull --rebase server main
+# echo "📡 Pulling from Server and rebasing ..."
+# git pull --rebase server main
 
-echo "🔄 Pushing to server..."
-git push server main
+# echo "🔄 Pushing to server..."
+# git push server main
 
 echo "✅ Deployment complete!"
