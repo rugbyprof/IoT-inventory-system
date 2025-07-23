@@ -3,7 +3,7 @@ const path = require('path');
 require('dotenv').config({ path: '../.env' });
 
 const db = mysql.createConnection({
-  host: 'localhost',
+  host: process.env.HOST,
   user: process.env.DB_USER,
   password: process.env.DB_PASS,
   database: 'lab_inventory'
