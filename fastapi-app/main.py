@@ -292,4 +292,4 @@ def pending_count(user: TokenData = Depends(admin_required)):
 if __name__ == "__main__":
     import uvicorn
 
-    uvicorn.run(app, host="0.0.0.0", port=5050)
+    uvicorn.run("api:app", host="0.0.0.0", port=5050, log_level="debug", reload=True)
