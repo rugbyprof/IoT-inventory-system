@@ -140,7 +140,8 @@ def login(u: UserLogin):
     user = cur.fetchone()
     print(u)
     print(f"Table Hash: {user['password'].encode()}")
-    print(f"Input Hash: {u.password.encode()}")
+    hashed = bcrypt.hashpw(user['password'].encode(), bcrypt.gensalt())
+    print(f"Input Hash: {hashed}")
     if not user or not bcrypt.checkpw(u.password.encode(), user["password"].encode()):
         raise HTTPException(status_code=401, detail="Invalid credentials")
     token = create_token(
