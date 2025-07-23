@@ -1,32 +1,59 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
+    <meta charset="UTF-8" />
     <title>Register</title>
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
-    <div class="container">
-      <h2>User Registration</h2>
-      <input type="text" id="username" placeholder="Username" required />
-      <input type="email" id="email" placeholder="Email" required />
-      <input type="password" id="password" placeholder="Password" required />
-      <button onclick="register()">Register</button>
-    </div>
+    <h1>Register</h1>
+    <form id="registerForm">
+      <input type="text" id="username" placeholder="Username" required /><br />
+      <input type="email" id="email" placeholder="Email" required /><br />
+      <input
+        type="password"
+        id="password"
+        placeholder="Password"
+        required
+      /><br />
+      <button type="submit">Register</button>
+    </form>
+    <p id="message"></p>
 
     <script>
-      function register() {
-        fetch("http://localhost:3000/api/auth/register", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            username: document.getElementById("username").value,
-            email: document.getElementById("email").value,
-            password: document.getElementById("password").value,
-          }),
-        })
-          .then((res) => res.json())
-          .then((data) => alert(data.message || data.error));
-      }
+      const form = document.getElementById("registerForm");
+      const message = document.getElementById("message");
+
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        const username = document.getElementById("username").value.trim();
+        const email = document.getElementById("email").value.trim();
+        const password = document.getElementById("password").value;
+
+        try {
+          const res = await fetch("http://localhost:5050/auth/register", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ username, email, password }),
+          });
+
+          const data = await res.json();
+
+          if (res.ok) {
+            message.textContent = "✅ Registered successfully!";
+            message.style.color = "green";
+            form.reset();
+          } else {
+            message.textContent = data.error || "❌ Registration failed.";
+            message.style.color = "red";
+          }
+        } catch (err) {
+          message.textContent = "❌ Network error.";
+          message.style.color = "red";
+          console.error(err);
+        }
+      });
     </script>
   </body>
 </html>

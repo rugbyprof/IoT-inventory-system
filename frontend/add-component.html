@@ -1,43 +1,81 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
+    <meta charset="UTF-8" />
     <title>Add Component</title>
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
-    <div class="container">
-      <h2>Add New Component</h2>
-      <input type="text" id="name" placeholder="Component Name" required />
-      <select id="category">
-        <option>main board</option>
-        <option>breakout board</option>
-        <option>capacitor</option>
-        <option>diode</option>
-        <option>resistor</option>
-        <option>transistor</option>
-        <option>sensor</option>
-      </select>
-      <input type="number" id="quantity" placeholder="Quantity" required />
-      <button onclick="addComponent()">Add Component</button>
-    </div>
+    <h1>Add Component</h1>
+    <form id="componentForm">
+      <input
+        type="text"
+        id="name"
+        placeholder="Component Name"
+        required
+      /><br />
+      <select id="category" required>
+        <option value="">Select Category</option>
+        <option value="main board">Main Board</option>
+        <option value="breakout board">Breakout Board</option>
+        <option value="capacitor">Capacitor</option>
+        <option value="diode">Diode</option>
+        <option value="resistor">Resistor</option>
+        <option value="transistor">Transistor</option>
+        <option value="sensor">Sensor</option></select
+      ><br />
+      <input
+        type="number"
+        id="quantity"
+        placeholder="Quantity"
+        required
+      /><br />
+      <button type="submit">Add Component</button>
+    </form>
+    <p id="message"></p>
 
     <script>
-      function addComponent() {
-        fetch("http://localhost:3000/api/components/add", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: "Bearer " + localStorage.getItem("token"),
-          },
-          body: JSON.stringify({
-            name: document.getElementById("name").value,
-            category: document.getElementById("category").value,
-            quantity: parseInt(document.getElementById("quantity").value),
-          }),
-        })
-          .then((res) => res.json())
-          .then((data) => alert(data.message || data.error));
-      }
+      const form = document.getElementById("componentForm");
+      const message = document.getElementById("message");
+
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        const token = localStorage.getItem("token");
+        if (!token) {
+          message.textContent = "Not authenticated. Please login.";
+          return;
+        }
+
+        const component = {
+          name: document.getElementById("name").value.trim(),
+          category: document.getElementById("category").value,
+          quantity: parseInt(document.getElementById("quantity").value, 10),
+        };
+
+        try {
+          const res = await fetch("http://localhost:5050/components/add", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify(component),
+          });
+
+          const data = await res.json();
+
+          if (res.ok) {
+            message.textContent = "✅ Component added!";
+            form.reset();
+          } else {
+            message.textContent = data.error || "❌ Failed to add component.";
+          }
+        } catch (err) {
+          message.textContent = "❌ Network error.";
+          console.error(err);
+        }
+      });
     </script>
   </body>
 </html>

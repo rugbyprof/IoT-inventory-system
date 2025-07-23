@@ -1,94 +1,103 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
-    <title>Approve Checkouts</title>
+    <meta charset="UTF-8" />
+    <title>Pending Approvals</title>
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
-    <div class="container">
-      <h2>Pending Checkout Requests</h2>
-      <table id="requests-table">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>User</th>
-            <th>Component</th>
-            <th>Quantity</th>
-            <th>Date</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
-    </div>
+    <h1>Pending Checkout Requests</h1>
+    <table border="1" id="approvalsTable">
+      <thead>
+        <tr>
+          <th>User</th>
+          <th>Component</th>
+          <th>Quantity</th>
+          <th>Requested</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+    <p id="message"></p>
 
     <script>
       const token = localStorage.getItem("token");
+      const tableBody = document.querySelector("#approvalsTable tbody");
+      const message = document.getElementById("message");
+
       if (!token) {
-        alert("Login required");
-        window.location.href = "admin-login.html";
-      }
-
-      async function fetchRequests() {
-        const res = await fetch(
-          "http://localhost:3000/api/admin/pending-checkouts",
-          {
-            headers: { Authorization: "Bearer " + token },
-          }
-        );
-        const data = await res.json();
-        const tbody = document.querySelector("#requests-table tbody");
-        tbody.innerHTML = "";
-        data.forEach((req) => {
-          const tr = document.createElement("tr");
-          tr.innerHTML = `
-        <td>${req.id}</td>
-        <td>${req.username}</td>
-        <td>${req.component}</td>
-        <td>${req.quantity}</td>
-        <td>${new Date(req.checkout_date).toLocaleString()}</td>
-        <td>
-          <button class="approve-btn" onclick="approve(${
-            req.id
-          })">Approve</button>
-          <button class="reject-btn" onclick="reject(${req.id})">Reject</button>
-        </td>
-      `;
-          tbody.appendChild(tr);
-        });
-      }
-
-      function approve(id) {
-        fetch(`http://localhost:3000/api/admin/approve-checkout/${id}`, {
-          method: "POST",
-          headers: { Authorization: "Bearer " + token },
+        message.textContent = "Not authenticated. Please login.";
+      } else {
+        fetch("http://localhost:5050/admin/pending-checkouts", {
+          headers: { Authorization: `Bearer ${token}` },
         })
           .then((res) => res.json())
           .then((data) => {
-            alert(data.message || data.error);
-            fetchRequests();
+            if (!Array.isArray(data)) {
+              message.textContent = data.error || "Failed to load approvals.";
+              return;
+            }
+
+            tableBody.innerHTML = "";
+            data.forEach((req) => {
+              const row = document.createElement("tr");
+              row.innerHTML = `
+            <td>${req.username}</td>
+            <td>${req.component}</td>
+            <td>${req.quantity}</td>
+            <td>${new Date(req.checkout_date).toLocaleString()}</td>
+            <td>
+              <button onclick="approve(${req.id})">✅</button>
+              <button onclick="reject(${req.id})">❌</button>
+            </td>
+          `;
+              tableBody.appendChild(row);
+            });
+          })
+          .catch((err) => {
+            console.error(err);
+            message.textContent = "Network error.";
+          });
+      }
+
+      function approve(id) {
+        fetch(`http://localhost:5050/admin/approve-checkout/${id}`, {
+          method: "POST",
+          headers: { Authorization: `Bearer ${token}` },
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            message.textContent = data.message || "Approved.";
+            location.reload();
+          })
+          .catch((err) => {
+            console.error(err);
+            message.textContent = "Approval failed.";
           });
       }
 
       function reject(id) {
-        const reason = prompt("Enter rejection reason:");
-        if (!reason) return;
-        fetch(`http://localhost:3000/api/admin/reject-checkout/${id}`, {
+        const reason =
+          prompt("Enter rejection reason:") || "No reason provided";
+        fetch(`http://localhost:5050/admin/reject-checkout/${id}`, {
           method: "POST",
           headers: {
+            Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
-            Authorization: "Bearer " + token,
           },
           body: JSON.stringify({ reason }),
         })
           .then((res) => res.json())
           .then((data) => {
-            alert(data.message || data.error);
-            fetchRequests();
+            message.textContent = data.message || "Rejected.";
+            location.reload();
+          })
+          .catch((err) => {
+            console.error(err);
+            message.textContent = "Rejection failed.";
           });
       }
-
-      fetchRequests();
     </script>
   </body>
 </html>

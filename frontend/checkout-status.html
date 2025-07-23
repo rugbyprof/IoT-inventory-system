@@ -1,54 +1,62 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
-    <title>My Checkout Requests</title>
+    <meta charset="UTF-8" />
+    <title>My Checkout Status</title>
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
-    <div class="container">
-      <h2>My Checkout Requests</h2>
-      <table id="status-table">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Component</th>
-            <th>Quantity</th>
-            <th>Status</th>
-            <th>Reason</th>
-            <th>Date</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
-    </div>
+    <h1>My Checkout Requests</h1>
+    <table border="1" id="statusTable">
+      <thead>
+        <tr>
+          <th>Component</th>
+          <th>Quantity</th>
+          <th>Status</th>
+          <th>Requested</th>
+          <th>Rejection Reason</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+    <p id="message"></p>
 
     <script>
       const token = localStorage.getItem("token");
-      if (!token) {
-        alert("Login required");
-        window.location.href = "admin-login.html";
-      }
+      const tableBody = document.querySelector("#statusTable tbody");
+      const message = document.getElementById("message");
 
-      fetch("http://localhost:3000/api/checkout/my-requests", {
-        headers: { Authorization: "Bearer " + token },
-      })
-        .then((res) => res.json())
-        .then((data) => {
-          const tbody = document.querySelector("#status-table tbody");
-          tbody.innerHTML = "";
-          data.forEach((row) => {
-            const tr = document.createElement("tr");
-            tr.innerHTML = `
-        <td>${row.id}</td>
-        <td>${row.component}</td>
-        <td>${row.quantity}</td>
-        <td>${row.status}</td>
-        <td>${row.rejection_reason || "-"}</td>
-        <td>${new Date(row.checkout_date).toLocaleString()}</td>
-      `;
-            tbody.appendChild(tr);
+      if (!token) {
+        message.textContent = "Not authenticated. Please login.";
+      } else {
+        fetch("http://localhost:5050/checkout/my-requests", {
+          headers: { Authorization: `Bearer ${token}` },
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            if (!Array.isArray(data)) {
+              message.textContent = data.error || "Failed to load requests.";
+              return;
+            }
+
+            tableBody.innerHTML = "";
+            data.forEach((req) => {
+              const row = document.createElement("tr");
+              row.innerHTML = `
+            <td>${req.component}</td>
+            <td>${req.quantity}</td>
+            <td>${req.status}</td>
+            <td>${new Date(req.checkout_date).toLocaleString()}</td>
+            <td>${req.rejection_reason || ""}</td>
+          `;
+              tableBody.appendChild(row);
+            });
+          })
+          .catch((err) => {
+            console.error(err);
+            message.textContent = "Network error.";
           });
-        });
+      }
     </script>
   </body>
 </html>

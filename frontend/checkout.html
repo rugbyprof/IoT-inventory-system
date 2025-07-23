@@ -1,45 +1,92 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
+    <meta charset="UTF-8" />
     <title>Checkout Component</title>
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
-    <div class="container">
-      <h2>Checkout Request</h2>
-      <input
-        type="number"
-        id="component_id"
-        placeholder="Component ID"
-        required
-      />
+    <h1>Request Component Checkout</h1>
+    <form id="checkoutForm">
+      <select id="componentSelect" required>
+        <option value="">Loading components...</option></select
+      ><br />
       <input
         type="number"
         id="quantity"
-        placeholder="Quantity to Checkout"
+        placeholder="Quantity"
         required
-      />
-      <button onclick="checkoutComponent()">Submit Request</button>
-    </div>
+      /><br />
+      <button type="submit">Submit Request</button>
+    </form>
+    <p id="message"></p>
 
     <script>
-      function checkoutComponent() {
-        fetch("http://localhost:3000/api/checkout", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: "Bearer " + localStorage.getItem("token"),
-          },
-          body: JSON.stringify({
-            component_id: parseInt(
-              document.getElementById("component_id").value
-            ),
-            quantity: parseInt(document.getElementById("quantity").value),
-          }),
-        })
-          .then((res) => res.json())
-          .then((data) => alert(data.message || data.error));
+      const token = localStorage.getItem("token");
+      const message = document.getElementById("message");
+      const select = document.getElementById("componentSelect");
+
+      if (!token) {
+        message.textContent = "Not authenticated. Please login.";
+        select.disabled = true;
       }
+
+      async function loadComponents() {
+        try {
+          const res = await fetch("http://localhost:5050/components", {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+          const components = await res.json();
+          select.innerHTML = '<option value="">Select Component</option>';
+          components.forEach((comp) => {
+            const option = document.createElement("option");
+            option.value = comp.id;
+            option.textContent = `${comp.name} (${comp.category})`;
+            select.appendChild(option);
+          });
+        } catch (err) {
+          message.textContent = "Failed to load components.";
+          console.error(err);
+        }
+      }
+
+      loadComponents();
+
+      document
+        .getElementById("checkoutForm")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+
+          const component_id = select.value;
+          const quantity = parseInt(
+            document.getElementById("quantity").value,
+            10
+          );
+
+          try {
+            const res = await fetch("http://localhost:5050/checkout", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+              },
+              body: JSON.stringify({ component_id, quantity }),
+            });
+
+            const data = await res.json();
+
+            if (res.ok) {
+              message.textContent = "✅ Request submitted!";
+            } else {
+              message.textContent = data.error || "❌ Request failed.";
+            }
+          } catch (err) {
+            message.textContent = "❌ Network error.";
+            console.error(err);
+          }
+        });
     </script>
   </body>
 </html>
