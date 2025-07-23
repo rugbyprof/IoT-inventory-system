@@ -1,5 +1,7 @@
 from fastapi import FastAPI, Depends, HTTPException, status
 from fastapi.responses import JSONResponse
+from fastapi.responses import RedirectResponse
+
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import Optional, List
@@ -104,6 +106,13 @@ def admin_required(user: TokenData = Depends(get_current_user)):
     if user.role != "admin":
         raise HTTPException(status_code=403, detail="Admins only")
     return user
+
+
+@app.get("/")
+async def docs_redirect():
+    """Api's base route that displays the information created above in the ApiInfo
+    section."""
+    return RedirectResponse(url="/docs")
 
 
 # Endpoints
