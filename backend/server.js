@@ -2,6 +2,8 @@ const express = require('express');
 const cors = require('cors');
 require('dotenv').config({ path: '../.env' });
 
+
+console.log('Path:', pat);
 console.log('Current working directory:', process.cwd());
 console.log('Current file location:', __dirname);
 
