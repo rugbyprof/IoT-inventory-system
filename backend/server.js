@@ -9,7 +9,7 @@ const adminRoutes = require('./routes/admin');
 
 const app = express();
 const HOST = process.env.HOST || 'localhost';
-const PORT = parseInt(process.env.PORT, 10) || 3000;
+const PORT = parseInt(process.env.PORT, 10) || 5050;
 
 app.use(cors());
 app.use(express.json());
