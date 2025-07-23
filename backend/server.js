@@ -2,6 +2,8 @@ const express = require('express');
 const cors = require('cors');
 require('dotenv').config({ path: '../.env' });
 
+console.log('Current working directory:', process.cwd());
+
 const db = process.env.DB
 
 console.log('DB .env:', process.env.DB);
