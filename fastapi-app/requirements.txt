@@ -1,0 +1,8 @@
+uvicorn
+fastapi
+rich
+requests
+jwt
+bcrypt
+mysql-connector-python
+dotenv
