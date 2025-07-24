@@ -28,7 +28,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-
 # Database connection
 def get_db():
     return mysql.connector.connect(
@@ -44,6 +43,12 @@ SECRET = os.getenv("JWT_SECRET", "supersecretkey")
 ALGORITHM = "HS256"
 ACCESS_EXPIRE_MINUTES = 120
 
+class User(BaseModel):
+    id: int
+    username: str
+    email: str
+    password: str
+    role: str   
 
 # Pydantic models
 class UserRegister(BaseModel):
@@ -137,11 +142,28 @@ def login(u: UserLogin):
     db = get_db()
     cur = db.cursor(dictionary=True)
     cur.execute("SELECT * FROM users WHERE username=%s", (u.username,))
-    user = cur.fetchone()
+    row = cur.fetchone()
+
+    user : User = User(**row)
+
+    # # Simulated user registration
+    # password = 'user123'
+    # stored_hash = bcrypt.hashpw(password.encode(), bcrypt.gensalt())
+
+    # # Simulated login
+    # attempt = 'user123'
+
+    # Manually extract salt and rehash attempt with it
+    salt = user.password[:29]  # First 29 characters contains version, cost, and salt
+    hashed = bcrypt.hashpw(u.password.encode(), salt)
+
+    # print("Stored hash: ", stored_hash.decode())
+    # print("Rehashed input: ", rehash.decode())
+    # print("Password match? ", bcrypt.checkpw(attempt.encode(), stored_hash))
     print(u)
     print(f"Table Hash: {user['password'].encode()}")
-    hashed = bcrypt.hashpw(user['password'].encode(), bcrypt.gensalt())
     print(f"Input Hash: {hashed}")
+    
     if not user or not bcrypt.checkpw(u.password.encode(), user["password"].encode()):
         raise HTTPException(status_code=401, detail="Invalid credentials")
     token = create_token(
